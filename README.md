@@ -12,6 +12,8 @@ El **objetivo** del proyecto es demostrar las habilidades adquiridas en **SQL** 
 - **Entorno**: DBeaver.
 
 ## 🏗️ Modelo de Datos
+![](Esquema_ER_BBDD.png)
+
 
 ## 🔍 Consultas Realizadas
 
