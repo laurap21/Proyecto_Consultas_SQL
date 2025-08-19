@@ -16,5 +16,8 @@ El **objetivo** del proyecto es demostrar las habilidades adquiridas en **SQL** 
 ## 🔍 Consultas Realizadas
 
 ## 📈 Resultados y Aprendizajes
+- Uso de **SELECT, JOIN, GROUP BY, ORDER BY y funciones de agregación**.  
+- Aplicación de **subconsultas y CTEs**.
+- Interpretación de resultados en un **contexto de negocio realista**.
 
 ## ✨ Próximos Pasos
