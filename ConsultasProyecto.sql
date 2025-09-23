@@ -9,7 +9,8 @@
  */
 
 SELECT f.title , f.rating 
-FROM film f ; 
+FROM film f 
+WHERE f.rating = 'R'; 
 
 
 /* 3. Encuentra los nombres de los actores que tengan un “actor_idˮ entre 30 y 40:
@@ -20,8 +21,7 @@ FROM film f ;
 
 SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Full_Name", a.actor_id 
 FROM actor a 
-GROUP BY a.actor_id 
-HAVING a.actor_id > 30 AND a.actor_id < 40 ;
+WHERE a.actor_id > 30 AND a.actor_id < 40 ;
 
 
 /* 4. Obtén las películas cuyo idioma coincide con el idioma original:
@@ -112,6 +112,12 @@ INNER JOIN payment p ON r.rental_id = p.rental_id
 ORDER BY r.rental_date DESC 
 LIMIT 1 OFFSET 2 ;
 
+-- Versión mejorada: 
+SELECT r.rental_id, r.rental_date
+FROM rental r
+ORDER BY r.rental_date DESC
+LIMIT 1 OFFSET 2;
+
 
 /* 12. Encuentra el título de las películas en la tabla “filmˮ que no sean ni ‘NC-17ʼ ni ‘Gʼ en cuanto a su clasificación:
  * Añadiendo un NOT IN en el WHERE, se muestran todas las películas que no están clasificadas como 'NC-17' ni 'G'.
@@ -146,7 +152,7 @@ WHERE f.length > 180 ;
  * El dinero total generado se obtiene haciendo una suma de 'amount' de la tabla 'payment'
  */
 
-SELECT (SUM(p.amount) AS "Total_income"
+SELECT SUM(p.amount) AS "Total_income"
 FROM payment p ;
 
 
@@ -240,6 +246,12 @@ FROM actor a ;
 SELECT r.rental_date, COUNT(r.rental_date) AS "Total_rentals"
 FROM rental r 
 GROUP BY r.rental_date 
+ORDER BY "Total_rentals" DESC;
+
+--Versión mejorada
+SELECT r.rental_date::date, COUNT(r.rental_date) AS "Total_rentals"
+FROM rental r 
+GROUP BY r.rental_date::date
 ORDER BY "Total_rentals" DESC;
 
 
@@ -343,6 +355,13 @@ LEFT JOIN film_actor fa ON f.film_id = fa.film_id
 GROUP BY f.title 
 ORDER BY "Actors_per_film" ASC ;
 
+--Mejora comentarios:
+SELECT f.title, COUNT(fa.actor_id) AS "Actors_per_film"
+FROM film f 
+INNER JOIN film_actor fa ON f.film_id = fa.film_id 
+GROUP BY f.title 
+ORDER BY "Actors_per_film" ASC ;
+
 
 /* 32. Obtener todos los actores y mostrar las películas en las que han actuado, incluso si algunos actores no han actuado en ninguna película:
  * Siguiendo la misma lógica que la consulta anterior, unimos las tablas 'actor' y 'film_actor' y contamos las películas con la función COUNT, agrupando después
@@ -352,6 +371,13 @@ ORDER BY "Actors_per_film" ASC ;
 SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Actor_name", a.actor_id, COUNT(fa.film_id) AS "Total_films"
 FROM actor a 
 LEFT JOIN film_actor fa ON a.actor_id = fa.actor_id 
+GROUP BY a.actor_id  
+ORDER BY "Total_films" ASC ;
+
+--Mejora comentarios:
+SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Actor_name", a.actor_id, COUNT(fa.film_id) AS "Total_films"
+FROM actor a 
+INNER JOIN film_actor fa ON a.actor_id = fa.actor_id 
 GROUP BY a.actor_id  
 ORDER BY "Total_films" ASC ;
 
@@ -395,9 +421,9 @@ SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Actor_name"
 FROM actor a
 WHERE a.first_name = 'JOHNNY' ;
 
-SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Actor_name"
+/*SELECT CONCAT(a.first_name, ' ', a.last_name) AS "Actor_name"
 FROM actor a
-WHERE a.first_name ILIKE 'Johnny' ;
+WHERE a.first_name ILIKE 'Johnny' ;*/
 
 
 /* 36.  Renombra la columna “first_nameˮ como Nombre y “last_nameˮ como Apellido.
@@ -486,7 +512,7 @@ SELECT *
 FROM film f
 CROSS JOIN category c ;
 
---Esta consulta sí aporta valor porque añade a la tabla de películas la categoría a la que pertenecen, complementando la información de las películas.
+--Esta consulta no aoprta valor, ya que se trata del producto cartesiano de todas las variables, sin aportar nada de información.
 
 
 /* 45. Encuentra los actores que han participado en películas de la categoría 'Action':
@@ -539,7 +565,7 @@ CREATE VIEW actor_num_peliculas AS
 	FROM actor a 
 	INNER JOIN film_actor fa 
 		ON a.actor_id = fa.actor_id
-	GROUP BY a.actor_id, a.first_name, a.last_name
+	GROUP BY a.actor_id, a.first_name, a.last_name ;
 	
 SELECT *
 FROM actor_num_peliculas ;
